@@ -17,7 +17,7 @@ Sub apex3()
     Set dict = CreateObject("Scripting.Dictionary")
     
     For Each cell In rngP
-        If Not dict.exists(cell.Value) Then
+        If Not dict.Exists(cell.Value) Then
             dict.Add cell.Value, 1
         Else
             dict(cell.Value) = dict(cell.Value) + 1
@@ -26,7 +26,7 @@ Sub apex3()
     
     ' Step 2: Delete rows where Column P is a duplicate AND Column N has data
     For i = ws.Cells(ws.Rows.count, "P").End(xlUp).Row To 2 Step -1
-        If dict.exists(ws.Cells(i, "P").Value) And dict(ws.Cells(i, "P").Value) > 1 And ws.Cells(i, "N").Value <> "" Then
+        If dict.Exists(ws.Cells(i, "P").Value) And dict(ws.Cells(i, "P").Value) > 1 And ws.Cells(i, "N").Value <> "" Then
             ws.Rows(i).Delete
         End If
     Next i
@@ -35,7 +35,7 @@ Sub apex3()
     Set dict = CreateObject("Scripting.Dictionary") ' Reinitialize dictionary for remaining duplicates
     
     For Each cell In ws.Range("P2:P" & ws.Cells(ws.Rows.count, "P").End(xlUp).Row)
-        If Not dict.exists(cell.Value) Then
+        If Not dict.Exists(cell.Value) Then
             dict.Add cell.Value, cell.Row
         Else
             ' Compare Column M values for duplicates
