@@ -1,5 +1,5 @@
 Attribute VB_Name = "HIPPACleaner"
-Sub ConsultReport_HIPPA_Edit()
+Sub HIPPACleaner()
 '
 ' ConsultReport_HIPPA_Edit Macro
 ' makes viable for sending without HIPPA violating
@@ -17,7 +17,7 @@ Sub ConsultReport_HIPPA_Edit()
     Columns("D:D").EntireColumn.AutoFit
     Rows("1:1").Select
     With Selection.Interior
-        .Pattern = xlNone
+        .pattern = xlNone
         .TintAndShade = 0
         .PatternTintAndShade = 0
     End With

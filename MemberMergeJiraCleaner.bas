@@ -1,5 +1,5 @@
 Attribute VB_Name = "MemberMergeJiraCleaner"
-Sub MMInactiveDataClean()
+Sub MemberMergeJiraCleaner()
     Dim wsSrc As Worksheet, wsOut As Worksheet
     Dim lastCol As Long, lastRow As Long
     Dim headers() As String, cleanedHeaders() As String
@@ -37,11 +37,11 @@ Sub MMInactiveDataClean()
     Next i
 
     ' Choose column with most non-empty cells among duplicates
-    For Each Key In colCounts
+    For Each key In colCounts
         Dim maxCount As Long: maxCount = 0
         Dim bestCol As Long: bestCol = 0
 
-        For Each idx In colCounts(Key)
+        For Each idx In colCounts(key)
             Dim count As Long
             count = Application.WorksheetFunction.CountA(wsSrc.Range(wsSrc.Cells(2, idx), wsSrc.Cells(lastRow, idx)))
             If count > maxCount Then
@@ -50,8 +50,8 @@ Sub MMInactiveDataClean()
             End If
         Next idx
 
-        If bestCol > 0 Then colMap(Key) = bestCol
-    Next Key
+        If bestCol > 0 Then colMap(key) = bestCol
+    Next key
 
     ' Create new worksheet
     On Error Resume Next
