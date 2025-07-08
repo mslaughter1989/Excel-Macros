@@ -6,17 +6,17 @@ Sub EligRecapOLD2()
     Dim appliedWBs As Collection
     Dim skippedWBs As Collection
     Dim wbName As String
-    Dim regEx As Object
+    Dim regex As Object
     Dim wbItem As Variant
     Dim report As String
 
     Set eligibleWorkbooks = New Collection
     Set appliedWBs = New Collection
     Set skippedWBs = New Collection
-    Set regEx = CreateObject("VBScript.RegExp")
+    Set regex = CreateObject("VBScript.RegExp")
 
     ' Regex to match: EligibilityRecapYYYY_MM_DD
-    With regEx
+    With regex
         .Global = False
         .IgnoreCase = True
         .pattern = "^EligibilityRecap\d{4}_\d{2}_\d{2}"
@@ -25,7 +25,7 @@ Sub EligRecapOLD2()
     ' Identify eligible workbooks
     For Each wb In Application.Workbooks
         wbName = Left(wb.Name, InStrRev(wb.Name, ".") - 1) ' remove extension
-        If regEx.Test(wbName) Then
+        If regex.Test(wbName) Then
             eligibleWorkbooks.Add wb
         Else
             skippedWBs.Add wb.Name

@@ -2,7 +2,7 @@ Attribute VB_Name = "EligRecap"
 Sub EligRecap()
     Dim wb As Workbook, ws As Worksheet
     Dim eligibleWorkbooks As Collection, appliedWBs As Collection, skippedWBs As Collection
-    Dim wbName As String, regEx As Object, wbItem As Variant
+    Dim wbName As String, regex As Object, wbItem As Variant
     Dim report As String, masterWB As Workbook, masterWS As Worksheet
     Dim lastRowDest As Long, isFirstCopy As Boolean
     Dim savePath As String, timeStamp As String
@@ -11,7 +11,7 @@ Sub EligRecap()
     Set eligibleWorkbooks = New Collection
     Set appliedWBs = New Collection
     Set skippedWBs = New Collection
-    Set regEx = CreateObject("VBScript.RegExp")
+    Set regex = CreateObject("VBScript.RegExp")
     Set masterWB = Workbooks.Add
     Set masterWS = masterWB.Sheets(1)
     masterWS.Name = "Combined EligRecap"
@@ -24,7 +24,7 @@ Sub EligRecap()
     savePath = "C:\Users\MichaelSlaughter\Downloads\EligibilityRecap_CombinedResults_" & timeStamp & ".xlsx"
 
     ' Match pattern: EligibilityRecapYYYY_MM_DD
-    With regEx
+    With regex
         .Global = False
         .IgnoreCase = True
         .pattern = "^EligibilityRecap\d{4}_\d{2}_\d{2}"
@@ -38,7 +38,7 @@ Sub EligRecap()
             wbName = wb.Name
         End If
 
-        If regEx.Test(wbName) Then
+        If regex.Test(wbName) Then
             eligibleWorkbooks.Add wb
         Else
             skippedWBs.Add wb.Name
@@ -80,7 +80,7 @@ Sub EligRecap()
     End With
 
     ' Save but keep open
-    masterWB.SaveAs Filename:=savePath, FileFormat:=xlOpenXMLWorkbook
+    masterWB.SaveAs fileName:=savePath, FileFormat:=xlOpenXMLWorkbook
 
     ' Build summary report
     report = "APPLIED WORKBOOKS:" & vbCrLf

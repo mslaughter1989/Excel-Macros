@@ -4,7 +4,7 @@ Sub DOBCleaner()
     Dim cell As Range
     Dim headerCell As Range
     Dim dobColumn As Long
-    Dim regEx As Object
+    Dim regex As Object
     Dim cleanHeader As String
     Dim i As Long
     Dim headerRow As Range
@@ -15,10 +15,10 @@ Sub DOBCleaner()
     dobColumn = 0
 
     ' Create regex to detect mm/dd/yyyy format
-    Set regEx = CreateObject("VBScript.RegExp")
-    regEx.pattern = "^(0[1-9]|1[0-2])/(0[1-9]|[12]\d|3[01])/\d{4}$"
-    regEx.IgnoreCase = False
-    regEx.Global = False
+    Set regex = CreateObject("VBScript.RegExp")
+    regex.pattern = "^(0[1-9]|1[0-2])/(0[1-9]|[12]\d|3[01])/\d{4}$"
+    regex.IgnoreCase = False
+    regex.Global = False
 
     ' Loop through header row to find DOB column
     For Each headerCell In headerRow.Cells
@@ -43,7 +43,7 @@ Sub DOBCleaner()
     ' Loop through each cell in the DOB column (starting at row 2)
     For i = 2 To ws.Cells(ws.Rows.count, dobColumn).End(xlUp).Row
         With ws.Cells(i, dobColumn)
-            If Not regEx.Test(.Text) Then
+            If Not regex.Test(.Text) Then
                 .Value = "" ' Remove non-standard formatted entries
             End If
         End With
