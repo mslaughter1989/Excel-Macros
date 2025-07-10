@@ -80,7 +80,7 @@ Sub EligRecap()
     End With
 
     ' Save but keep open
-    masterWB.SaveAs fileName:=savePath, FileFormat:=xlOpenXMLWorkbook
+    masterWB.SaveAs fileName:=savePath, fileFormat:=xlOpenXMLWorkbook
 
     ' Build summary report
     report = "APPLIED WORKBOOKS:" & vbCrLf

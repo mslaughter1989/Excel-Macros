@@ -1,8 +1,24 @@
-Attribute VB_Name = "Module1"
-Function LoadMappings() As Object
-    Dim dict As Object
-    Set dict = CreateObject("Scripting.Dictionary")
+Attribute VB_Name = "SaveWorkbooksModule21"
 
+Sub SaveOpenWorkbooksToMappedFolders()
+    Dim wb As Workbook
+    Dim fileName As String, fileDate As String
+    Dim fileMonth As String, fileYear As String
+    Dim folderName As String, fullPath As String
+    Dim monthNames As Variant
+    Dim regex As Object, matches As Object
+    Dim dict As Object
+    Dim key As Variant
+    Dim fso As Object, logFile As Object
+    Dim logPath As String
+    Dim saveSuccess As Boolean
+
+    ' Month names array
+    monthNames = Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", _
+                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+    ' Create dictionary of file name patterns to save paths
+    Set dict = CreateObject("Scripting.Dictionary")
     dict.Add "MarvelHR_723827_mmddyyyy_Full.csv", "C:\Users\MichaelSlaughter\OneDrive - Recuro Health\Documents - Ops\EDI-Eligibility\SFTP - Sharefile\Clients\PrismHR\Marvel HR"
     dict.Add "ResidentialManagementGroup_691345_mmddyyyy_Full.csv", "C:\Users\MichaelSlaughter\OneDrive - Recuro Health\Documents - Ops\EDI-Eligibility\SFTP - Sharefile\Clients\Residential Management Group"
     dict.Add "WireMasters_mmddyyyy_FULL.csv", "C:\Users\MichaelSlaughter\OneDrive - Recuro Health\Documents - Ops\EDI-Eligibility\SFTP - Sharefile\Clients\WireMasters"
@@ -60,5 +76,66 @@ Function LoadMappings() As Object
     dict.Add "USAHaulingRecycling_669506_mmddyyyy_Full.csv", "C:\Users\MichaelSlaughter\OneDrive - Recuro Health\Documents - Ops\EDI-Eligibility\SFTP - Sharefile\Clients\USA Hauling & Recycling"
     dict.Add "VOA_663805_mmddyyyy.csv", "C:\Users\MichaelSlaughter\OneDrive - Recuro Health\Documents - Ops\EDI-Eligibility\SFTP - Sharefile\Clients\Volunteers of America"
 
-    Set LoadMappings = dict
-End Function
+    ' Create log file in same folder as this workbook
+    logPath = ThisWorkbook.Path & "\SaveLog.txt"
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set logFile = fso.CreateTextFile(logPath, True)
+
+    ' Loop through all open workbooks
+    For Each wb In Application.Workbooks
+        If wb.Name <> ThisWorkbook.Name Then
+            fileName = wb.Name
+            If InStr(fileName, ".") > 0 Then
+                fileName = Left(fileName, InStrRev(fileName, ".") - 1)
+            End If
+
+            saveSuccess = False
+
+            ' Try to match against each pattern
+            For Each key In dict.Keys
+                If InStr(key, "_mm") > 0 Then
+                    If InStr(fileName, Split(key, "_mm")(0)) > 0 Then
+                        ' Extract 8-digit date
+                        Set regex = CreateObject("VBScript.RegExp")
+                        regex.pattern = "\d{6,8}"
+                        regex.Global = False
+                        regex.IgnoreCase = True
+
+                        If regex.Test(fileName) Then
+                            Set matches = regex.Execute(fileName)
+                            fileDate = matches(0)
+                            fileMonth = Left(fileDate, 2)
+                            fileYear = Right(fileDate, 2)
+
+                            folderName = fileMonth & monthNames(CInt(fileMonth) - 1) & fileYear
+                            fullPath = dict(key) & "\" & folderName & "\"
+
+                            ' Create folder recursively
+                            CreateFoldersRecursively fullPath
+
+                            wb.SaveCopyAs fullPath & wb.Name
+                            logFile.WriteLine "Saved: " & wb.Name & " to " & fullPath
+                            saveSuccess = True
+                            Exit For
+                        End If
+                    End If
+                End If
+            Next key
+
+            If Not saveSuccess Then
+                logFile.WriteLine "Skipped: " & wb.Name & " (no matching pattern or date)"
+            End If
+        End If
+    Next wb
+
+    logFile.Close
+    MsgBox "All matching workbooks have been saved. See SaveLog.txt for details."
+End Sub
+
+Sub CreateFoldersRecursively(ByVal folderPath As String)
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    If Not fso.FolderExists(folderPath) Then
+        fso.CreateFolder folderPath
+    End If
+End Sub
