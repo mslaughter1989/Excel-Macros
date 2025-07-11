@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module3"
+Attribute VB_Name = "AutoProcessAndSaveFiles_Helpers"
 
 Function LoadSFTPDataFromExcel() As Variant
     Dim ws As Worksheet, wb As Workbook, lastRow As Long

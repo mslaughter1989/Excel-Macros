@@ -4,7 +4,7 @@ Sub MemberMergBulkEdit()
     Dim lastCol As Long, lastRow As Long
     Dim colIssueKey As Long, colKeepID As Long, colIDs As Long
     Dim i As Long, j As Long, k As Long, maxIDs As Long
-    Dim matches As Object, regex As Object, regNum As Object
+    Dim matches As Object, regEx As Object, regNum As Object
     Dim cellVal As String
     Dim keepID As String
 
@@ -40,9 +40,9 @@ Sub MemberMergBulkEdit()
     wsOut.Cells(1, 3).Value = "Member ID(s)"
 
     ' RegEx setup
-    Set regex = CreateObject("VBScript.RegExp")
-    regex.Global = True
-    regex.pattern = "\b\d{9}\b"
+    Set regEx = CreateObject("VBScript.RegExp")
+    regEx.Global = True
+    regEx.pattern = "\b\d{9}\b"
 
     Set regNum = CreateObject("VBScript.RegExp")
     regNum.Global = False
@@ -52,8 +52,8 @@ Sub MemberMergBulkEdit()
     maxIDs = 0
     For i = 2 To lastRow
         cellVal = wsSrc.Cells(i, colIDs).Value
-        If regex.Test(cellVal) Then
-            Set matches = regex.Execute(cellVal)
+        If regEx.Test(cellVal) Then
+            Set matches = regEx.Execute(cellVal)
             If matches.count > maxIDs Then maxIDs = matches.count
         End If
     Next i
@@ -82,8 +82,8 @@ Sub MemberMergBulkEdit()
 
         ' Extract individual IDs and compare
         cellVal = wsSrc.Cells(i, colIDs).Value
-        If regex.Test(cellVal) Then
-            Set matches = regex.Execute(cellVal)
+        If regEx.Test(cellVal) Then
+            Set matches = regEx.Execute(cellVal)
             For j = 0 To matches.count - 1
                 wsOut.Cells(i, 4 + j).Value = matches(j)
                 If matches(j) = keepID Then

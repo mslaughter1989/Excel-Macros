@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module2"
+Attribute VB_Name = "AutoProcessAndSaveFiles_ExcelDr"
 
 Sub AutoProcessAndSaveFiles_ExcelDriven_Main()
     Dim wb As Workbook, ws As Worksheet
